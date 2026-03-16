@@ -10,7 +10,7 @@
     "teaser": true,
     "abstract": true,
     "imageCarousel": true,
-    "youtube": false,
+    "youtube": true,
     "videoCarousel": true,
     "poster": true,
     "bibtex": true,
