@@ -531,7 +531,7 @@ function resolveBackgroundValue(mode, value, palette) {
   
   function getVisibleBackgroundBlocksInDomOrder() {
     return Array.from(
-      document.querySelectorAll('main > section[data-bg-mode], footer[data-bg-mode]')
+      document.querySelectorAll('#main-content section[data-bg-mode], footer[data-bg-mode]')
     ).filter(el => !el.hidden);
   }
   
