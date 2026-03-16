@@ -37,6 +37,22 @@
     }
   }
 
+  function setSectionTitle(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const text = String(value ?? "").trim();
+
+    if (!text) {
+      el.hidden = true;
+      el.textContent = "";
+      return;
+    }
+
+    el.textContent = text;
+    el.hidden = false;
+  }
+
   function showSection(sectionKey, visible) {
     const el = document.querySelector(`[data-section="${sectionKey}"]`);
     if (!el) return;
@@ -73,6 +89,8 @@
       : "";
     const authorNames = authors.map(a => a.name).join(", ");
     const titleText = paper.title || meta.title || "Academic Project Page";
+    const abstractText = paper.abstract?.text || "";
+    const bibtexContent = paper.bibtex?.content || "";
 
     document.title = `${titleText}${authorNames ? ` - ${authorNames}` : ""} | Academic Research`;
 
@@ -142,8 +160,8 @@
       "url": pageUrl,
       "image": previewImage,
       "keywords": keywordList,
-      "abstract": paper.abstract || "",
-      "citation": paper.bibtex || "",
+      "abstract": abstractText,
+      "citation": bibtexContent,
       "isAccessibleForFree": true,
       "license": "https://creativecommons.org/licenses/by-sa/4.0/",
       "mainEntity": {
@@ -257,21 +275,28 @@
   }
 
   function renderAbstract(content) {
-    showSection("abstract", !!content.sections?.abstract);
-    setText("paper-abstract", content.paper?.abstract || "");
+    const visible = !!content.sections?.abstract;
+    showSection("abstract", visible);
+    if (!visible) return;
+
+    setSectionTitle("abstract-title", content.paper?.abstract?.title);
+    setText("paper-abstract", content.paper?.abstract?.text || "");
   }
 
   function renderFigureCarousel(content) {
-    const visible = !!content.sections?.imageCarousel && safeArray(content.paper?.figureCarousel).length > 0;
+    const items = safeArray(content.paper?.figureCarousel?.items);
+    const visible = !!content.sections?.imageCarousel && items.length > 0;
     showSection("imageCarousel", visible);
     if (!visible) return;
+
+    setSectionTitle("image-carousel-title", content.paper?.figureCarousel?.title);
 
     const container = document.getElementById("results-carousel");
     const template = document.getElementById("figure-carousel-item-template");
     if (!container || !template) return;
 
     container.innerHTML = "";
-    safeArray(content.paper.figureCarousel).forEach(item => {
+    items.forEach(item => {
       const fragment = template.content.cloneNode(true);
       const img = fragment.querySelector(".carousel-image");
       const caption = fragment.querySelector(".carousel-caption");
@@ -289,8 +314,8 @@
     showSection("youtube", visible);
     if (!visible) return;
 
-    setText("youtube-section-title", content.paper.youtube.title || "Video Presentation");
-    setAttr("youtube-embed", "src", content.paper.youtube.embedUrl || "");
+    setSectionTitle("youtube-section-title", content.paper?.youtube?.title);
+    setAttr("youtube-embed", "src", content.paper?.youtube?.embedUrl || "");
   }
 
   function renderVideoCarousel(content) {
@@ -299,7 +324,7 @@
     showSection("videoCarousel", visible);
     if (!visible) return;
 
-    setText("video-carousel-title", content.paper?.videoCarousel?.title || "Another Carousel");
+    setSectionTitle("video-carousel-title", content.paper?.videoCarousel?.title);
 
     const container = document.getElementById("video-carousel");
     const template = document.getElementById("video-carousel-item-template");
@@ -316,6 +341,9 @@
       if (item.caption) {
         caption.textContent = item.caption;
         caption.hidden = false;
+      } else {
+        caption.hidden = true;
+        caption.textContent = "";
       }
 
       container.appendChild(fragment);
@@ -328,24 +356,31 @@
     showSection("poster", visible);
     if (!visible) return;
 
-    setText("poster-title", content.paper.poster.title || "Poster");
-    setAttr("poster-iframe", "src", content.paper.poster.pdf || "");
+    setSectionTitle("poster-title", content.paper?.poster?.title);
+    setAttr("poster-iframe", "src", content.paper?.poster?.pdf || "");
   }
 
   function renderBibtex(content) {
-    showSection("bibtex", !!content.sections?.bibtex);
+    const visible = !!content.sections?.bibtex;
+    showSection("bibtex", visible);
+    if (!visible) return;
+
+    setSectionTitle("bibtex-title", content.paper?.bibtex?.title);
+
     const pre = document.getElementById("bibtex-code");
     const code = pre?.querySelector("code");
     if (pre && code) {
-      code.textContent = content.paper?.bibtex || "";
+      code.textContent = content.paper?.bibtex?.content || "";
     }
   }
 
   function renderPeople(content) {
-    const people = safeArray(content.paper?.people);
+    const people = safeArray(content.paper?.people?.items);
     const visible = !!content.sections?.people && people.length > 0;
     showSection("people", visible);
     if (!visible) return;
+
+    setSectionTitle("people-title", content.paper?.people?.title);
 
     const container = document.getElementById("people-grid");
     const template = document.getElementById("person-template");
@@ -464,114 +499,101 @@
   }
 
   function getThemeBackgrounds() {
-  const rootStyle = getComputedStyle(document.documentElement);
+    const rootStyle = getComputedStyle(document.documentElement);
 
-  return {
-    white: rootStyle.getPropertyValue('--background-primary').trim() || '#ffffff',
-    secondary: rootStyle.getPropertyValue('--background-secondary').trim() || '#f8fafc',
-    accent: rootStyle.getPropertyValue('--background-accent').trim() || '#f1f5f9',
-    muted: rootStyle.getPropertyValue('--background-muted').trim() || '#f3f4f6',
-    highlight: rootStyle.getPropertyValue('--background-highlight').trim() || '#eef6ff',
-    accentSoft: rootStyle.getPropertyValue('--background-accent-soft').trim() || '#f1f5f9'
-  };
-}
-
-function resolveBackgroundValue(mode, value, palette) {
-  if (mode === 'custom') {
-    return value || palette.white;
+    return {
+      white: rootStyle.getPropertyValue('--background-primary').trim() || '#ffffff',
+      secondary: rootStyle.getPropertyValue('--background-secondary').trim() || '#f8fafc',
+      accent: rootStyle.getPropertyValue('--background-accent').trim() || '#f1f5f9',
+      muted: rootStyle.getPropertyValue('--background-muted').trim() || '#f3f4f6',
+      highlight: rootStyle.getPropertyValue('--background-highlight').trim() || '#eef6ff',
+      accentSoft: rootStyle.getPropertyValue('--background-accent-soft').trim() || '#f1f5f9'
+    };
   }
 
-  if (mode === 'fixed') {
-    switch ((value || '').trim()) {
-      case 'white':
-        return palette.white;
-      case 'secondary':
-        return palette.secondary;
-      case 'accent':
-        return palette.accent;
-      case 'muted':
-        return palette.muted;
-      case 'highlight':
-        return palette.highlight;
-      case 'accent-soft':
-        return palette.accentSoft;
-      default:
-        return palette.white;
+  function resolveBackgroundValue(mode, value, palette) {
+    if (mode === 'custom') {
+      return value || palette.white;
     }
-  }
 
-  return null;
-}
+    if (mode === 'fixed') {
+      switch ((value || '').trim()) {
+        case 'white':
+          return palette.white;
+        case 'secondary':
+          return palette.secondary;
+        case 'accent':
+          return palette.accent;
+        case 'muted':
+          return palette.muted;
+        case 'highlight':
+          return palette.highlight;
+        case 'accent-soft':
+          return palette.accentSoft;
+        default:
+          return palette.white;
+      }
+    }
+
+    return null;
+  }
 
   function clearSectionBackground(block) {
     if (!block) return;
-  
+
     block.style.removeProperty('background');
     block.style.removeProperty('background-color');
-  
+
     const heroBody = block.querySelector(':scope > .hero-body');
     if (heroBody) {
       heroBody.style.removeProperty('background');
       heroBody.style.removeProperty('background-color');
     }
   }
-  
+
   function setSectionBackground(block, color) {
     if (!block || !color) return;
-  
+
     block.style.setProperty('background', color, 'important');
     block.style.setProperty('background-color', color, 'important');
-  
+
     const heroBody = block.querySelector(':scope > .hero-body');
     if (heroBody) {
       heroBody.style.setProperty('background', color, 'important');
       heroBody.style.setProperty('background-color', color, 'important');
     }
   }
-  
+
   function getVisibleBackgroundBlocksInDomOrder() {
     return Array.from(
       document.querySelectorAll('#main-content section[data-bg-mode], footer[data-bg-mode]')
     ).filter(el => !el.hidden);
   }
-  
+
   function applyAlternatingBackgrounds() {
     const palette = getThemeBackgrounds();
     const blocks = getVisibleBackgroundBlocksInDomOrder();
-  
+
     blocks.forEach(clearSectionBackground);
-  
+
     let autoIndex = 0;
-  
+
     blocks.forEach(block => {
       const mode = block.dataset.bgMode;
       const value = block.dataset.bgValue || '';
-  
+
       if (mode === 'fixed' || mode === 'custom') {
         const resolved = resolveBackgroundValue(mode, value, palette);
         setSectionBackground(block, resolved);
         return;
       }
-  
+
       if (mode === 'auto') {
         const color = autoIndex % 2 === 0 ? palette.secondary : palette.white;
         setSectionBackground(block, color);
         autoIndex += 1;
       }
     });
-
-    console.table(
-      getVisibleBackgroundBlocksInDomOrder().map((block, index) => ({
-        index,
-        id: block.id || 'footer',
-        mode: block.dataset.bgMode,
-        value: block.dataset.bgValue || '',
-        background: getComputedStyle(block).backgroundColor,
-        heroBodyBackground: block.querySelector(':scope > .hero-body')
-          ? getComputedStyle(block.querySelector(':scope > .hero-body')).backgroundColor
-          : '(none)'
-      }))
-    );
   }
 
   try {
