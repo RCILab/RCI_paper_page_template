@@ -788,3 +788,15 @@ a:focus {
 .rci-bg-alt {
   background-color: #f8fafc !important;
 }
+
+.rci-bg-white .hero-body,
+.rci-bg-white .footer,
+.rci-bg-white.is-light {
+  background-color: #ffffff !important;
+}
+
+.rci-bg-alt .hero-body,
+.rci-bg-alt .footer,
+.rci-bg-alt.is-light {
+  background-color: #f8fafc !important;
+}
