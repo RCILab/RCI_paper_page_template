@@ -559,6 +559,19 @@ function resolveBackgroundValue(mode, value, palette) {
         autoIndex += 1;
       }
     });
+
+    console.table(
+      getVisibleBackgroundBlocksInDomOrder().map((block, index) => ({
+        index,
+        id: block.id || 'footer',
+        mode: block.dataset.bgMode,
+        value: block.dataset.bgValue || '',
+        background: getComputedStyle(block).backgroundColor,
+        heroBodyBackground: block.querySelector(':scope > .hero-body')
+          ? getComputedStyle(block.querySelector(':scope > .hero-body')).backgroundColor
+          : '(none)'
+      }))
+    );
   }
 
   try {
