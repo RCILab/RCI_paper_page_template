@@ -315,11 +315,11 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered has-text-centered">
           <div class="column is-four-fifths">
-            <h2 class="title is-3">Abstract</h2>
+            <h2 id="abstract-title" class="title is-3" hidden>Abstract</h2>
             <div class="content has-text-justified">
               <!-- TODO: Replace with your paper abstract -->
               <p id="paper-abstract"
-                 data-field="paper.abstract"
+                 data-field="paper.abstract.text"
                  data-editable="textarea">
                 This is a placeholder abstract for the RCILab paper page template. Replace this text with the actual abstract of your paper.
               </p>
@@ -334,7 +334,8 @@
     <section class="hero is-small" id="section-image-carousel" data-section="imageCarousel" data-bg-mode="auto" hidden>
       <div class="hero-body">
         <div class="container">
-          <div id="results-carousel" class="carousel results-carousel" data-list="paper.figureCarousel">
+          <h2 id="image-carousel-title" class="title is-3 has-text-centered" hidden></h2>
+          <div id="results-carousel" class="carousel results-carousel" data-list="paper.figureCarousel.items">
             <!-- TODO: Replace with your research result images -->
           </div>
         </div>
@@ -348,7 +349,7 @@
         <div class="container is-max-desktop">
           <div class="columns is-centered">
             <div class="column is-four-fifths has-text-centered">
-              <h2 class="title is-3" id="youtube-section-title" data-field="paper.youtube.title">Video Presentation(Youtube)</h2>
+              <h2 class="title is-3" id="youtube-section-title" hidden></h2>
 
               <div style="max-width: 960px; margin: 0 auto;">
                 <div class="publication-video">
@@ -375,12 +376,7 @@
         <div class="container is-max-desktop">
           <div class="columns is-centered">
             <div class="column is-four-fifths has-text-centered">
-              <h2 id="video-carousel-title"
-                  class="title is-3"
-                  data-field="paper.videoCarousel.title"
-                  data-editable="text">
-                Another Video Carousel
-              </h2>
+              <h2 id="video-carousel-title" class="title is-3" hidden></h2>
 
               <div style="max-width: 960px; margin: 0 auto;">
                 <div id="video-carousel" class="carousel results-carousel" data-list="paper.videoCarousel.items">
@@ -401,7 +397,7 @@
         <div class="container is-max-desktop">
           <div class="columns is-centered">
             <div class="column is-four-fifths has-text-centered">
-              <h2 class="title is-3" id="poster-title" data-field="paper.poster.title">Poster</h2>
+              <h2 class="title is-3" id="poster-title" hidden></h2>
 
               <!-- TODO: Replace with your poster PDF -->
               <div style="text-align: center;">
@@ -422,14 +418,14 @@
     <section class="section" id="BibTeX" data-section="bibtex" data-bg-mode="auto">
       <div class="container is-max-desktop content">
         <div class="bibtex-header">
-          <h2 class="title">BibTeX</h2>
+          <h2 id="bibtex-title" class="title" hidden>BibTeX</h2>
           <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
             <i class="fas fa-copy"></i>
             <span class="copy-text">Copy</span>
           </button>
         </div>
         <pre id="bibtex-code"
-             data-field="paper.bibtex"
+             data-field="paper.bibtex.content"
              data-editable="textarea"><code>@article{YourPaperKey2024,
   title={Your Paper Title Here},
   author={First Author and Second Author and Third Author},
@@ -446,10 +442,10 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column is-four-fifths has-text-centered">
-            <h2 class="title is-3">People</h2>
+            <h2 id="people-title" class="title is-3" hidden></h2>
             <div id="people-grid"
                  class="columns is-centered is-multiline is-variable is-6"
-                 data-list="paper.people">
+                 data-list="paper.people.items">
             </div>
           </div>
         </div>
