@@ -585,6 +585,7 @@ function resolveBackgroundValue(mode, value, palette) {
     renderMoreWorks(content, lab);
 
     requestAnimationFrame(() => {
+      reinitializeCarousels();
       applyAlternatingBackgrounds();
     });
   } catch (error) {
