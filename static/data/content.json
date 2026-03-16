@@ -126,7 +126,7 @@
     },
 
     
-    "figureCarousel": [
+    "figureCarousel": {
       "title": "Image(figure) Carousel",
       "items": [
         {
@@ -150,7 +150,7 @@
           "caption": "Fourth image description."
         }
       ]
-    ],
+    },
 
     
     "youtube": {
