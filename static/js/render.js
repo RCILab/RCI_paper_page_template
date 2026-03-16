@@ -544,7 +544,7 @@
     block.style.removeProperty('background');
     block.style.removeProperty('background-color');
 
-    const heroBody = block.querySelector(':scope > .hero-body');
+    const heroBody = block.querySelector('.hero-body');
     if (heroBody) {
       heroBody.style.removeProperty('background');
       heroBody.style.removeProperty('background-color');
@@ -557,7 +557,7 @@
     block.style.setProperty('background', color, 'important');
     block.style.setProperty('background-color', color, 'important');
 
-    const heroBody = block.querySelector(':scope > .hero-body');
+    const heroBody = block.querySelector('.hero-body');
     if (heroBody) {
       heroBody.style.setProperty('background', color, 'important');
       heroBody.style.setProperty('background-color', color, 'important');
