@@ -780,4 +780,11 @@ a:focus {
   }
 }
 
+/* ===== Alternating section backgrounds ===== */
+.rci-bg-white {
+  background-color: #ffffff !important;
+}
 
+.rci-bg-alt {
+  background-color: #f8fafc !important;
+}
