@@ -463,25 +463,45 @@
     main.prepend(warning);
   }
 
-  function applyBgClass(block, className) {
+  function getThemeBackgrounds() {
+    const rootStyle = getComputedStyle(document.documentElement);
+    return {
+      white: rootStyle.getPropertyValue('--background-primary').trim() || '#ffffff',
+      alt: rootStyle.getPropertyValue('--background-secondary').trim() || '#f8fafc'
+    };
+  }
+  
+  function clearSectionBackground(block) {
     if (!block) return;
   
-    block.classList.remove("rci-bg-white", "rci-bg-alt");
-    block.classList.add(className);
+    block.style.removeProperty('background');
+    block.style.removeProperty('background-color');
   
-    const heroBody = block.querySelector(":scope > .hero-body");
+    const heroBody = block.querySelector(':scope > .hero-body');
     if (heroBody) {
-      heroBody.classList.remove("rci-bg-white", "rci-bg-alt");
-      heroBody.classList.add(className);
+      heroBody.style.removeProperty('background');
+      heroBody.style.removeProperty('background-color');
     }
   }
-
+  
+  function setSectionBackground(block, color) {
+    if (!block) return;
+  
+    block.style.setProperty('background', color, 'important');
+    block.style.setProperty('background-color', color, 'important');
+  
+    const heroBody = block.querySelector(':scope > .hero-body');
+    if (heroBody) {
+      heroBody.style.setProperty('background', color, 'important');
+      heroBody.style.setProperty('background-color', color, 'important');
+    }
+  }
+  
   function getOrderedAlternatingBlocks() {
     const hero = document.getElementById("section-hero");
     const teaser = document.getElementById("section-teaser");
     const footer = document.querySelector("footer.footer");
   
-    // hero + teaser 뒤부터 교차할 실제 순서
     const orderedIds = [
       "section-abstract",
       "section-image-carousel",
@@ -505,39 +525,28 @@
   }
   
   function applyAlternatingBackgrounds() {
+    const { white, alt } = getThemeBackgrounds();
     const { hero, teaser, alternatingSections, footer } = getOrderedAlternatingBlocks();
   
-    const allBlocks = [
-      hero,
-      teaser,
-      ...alternatingSections,
-      footer
-    ].filter(Boolean);
-  
-    allBlocks.forEach(block => {
-      block.classList.remove("rci-bg-white", "rci-bg-alt");
-      const heroBody = block.querySelector(":scope > .hero-body");
-      if (heroBody) {
-        heroBody.classList.remove("rci-bg-white", "rci-bg-alt");
-      }
-    });
+    const allBlocks = [hero, teaser, ...alternatingSections, footer].filter(Boolean);
+    allBlocks.forEach(clearSectionBackground);
   
     // hero + teaser는 무조건 흰색
-    applyBgClass(hero, "rci-bg-white");
+    setSectionBackground(hero, white);
     if (teaser && !teaser.hidden) {
-      applyBgClass(teaser, "rci-bg-white");
+      setSectionBackground(teaser, white);
     }
   
     // 그 다음부터 교차
     alternatingSections.forEach((section, index) => {
-      applyBgClass(section, index % 2 === 0 ? "rci-bg-alt" : "rci-bg-white");
+      setSectionBackground(section, index % 2 === 0 ? alt : white);
     });
   
-    // footer도 이어서 적용
+    // footer도 마지막 다음 색을 이어받음
     if (footer) {
-      applyBgClass(
+      setSectionBackground(
         footer,
-        alternatingSections.length % 2 === 0 ? "rci-bg-alt" : "rci-bg-white"
+        alternatingSections.length % 2 === 0 ? alt : white
       );
     }
   }
