@@ -463,6 +463,19 @@
     main.prepend(warning);
   }
 
+  function applyBgClass(block, className) {
+    if (!block) return;
+  
+    block.classList.remove("rci-bg-white", "rci-bg-alt");
+    block.classList.add(className);
+  
+    const heroBody = block.querySelector(":scope > .hero-body");
+    if (heroBody) {
+      heroBody.classList.remove("rci-bg-white", "rci-bg-alt");
+      heroBody.classList.add(className);
+    }
+  }
+
   function getOrderedAlternatingBlocks() {
     const hero = document.getElementById("section-hero");
     const teaser = document.getElementById("section-teaser");
@@ -503,26 +516,27 @@
   
     allBlocks.forEach(block => {
       block.classList.remove("rci-bg-white", "rci-bg-alt");
+      const heroBody = block.querySelector(":scope > .hero-body");
+      if (heroBody) {
+        heroBody.classList.remove("rci-bg-white", "rci-bg-alt");
+      }
     });
   
-    // 1) hero는 항상 흰색
-    if (hero) {
-      hero.classList.add("rci-bg-white");
-    }
-  
-    // 2) teaser도 항상 흰색 (hero와 한 묶음)
+    // hero + teaser는 무조건 흰색
+    applyBgClass(hero, "rci-bg-white");
     if (teaser && !teaser.hidden) {
-      teaser.classList.add("rci-bg-white");
+      applyBgClass(teaser, "rci-bg-white");
     }
   
-    // 3) 그 다음부터 교차 시작: 첫 번째는 alt
+    // 그 다음부터 교차
     alternatingSections.forEach((section, index) => {
-      section.classList.add(index % 2 === 0 ? "rci-bg-alt" : "rci-bg-white");
+      applyBgClass(section, index % 2 === 0 ? "rci-bg-alt" : "rci-bg-white");
     });
   
-    // 4) footer는 마지막 visible section 다음 색을 이어받음
+    // footer도 이어서 적용
     if (footer) {
-      footer.classList.add(
+      applyBgClass(
+        footer,
         alternatingSections.length % 2 === 0 ? "rci-bg-alt" : "rci-bg-white"
       );
     }
