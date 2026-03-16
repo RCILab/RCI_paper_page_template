@@ -4,6 +4,8 @@
   "slug": "sample-project",
   "pageUrl": "",
   "repoUrl": "",
+
+  
   "sections": {
     "hero": true,
     "moreWorks": false,
@@ -46,11 +48,37 @@
 
   
   "paper": {
+    
     "title": "Academic Project Page",
     "venueText": "Institution Name<br>Conference name and year",
     "contributionNote": "<small><br><sup>*</sup>Indicates Equal Contribution, </small><small><sup>†</sup>Corresponding Author</small>",
+
+  
+    "links": [
+      {
+        "label": "Paper",
+        "url": "static/pdfs/sample.pdf",
+        "iconType": "pdf"
+      },
+      {
+        "label": "YouTube",
+        "url": "https://www.youtube.com/",
+        "iconType": "youtube"
+      },
+      {
+        "label": "Code",
+        "url": "https://github.com/YOUR_REPO_HERE",
+        "iconType": "github"
+      },
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/<ARXIV PAPER ID>",
+        "iconType": "arxiv"
+      }
+    ],
+    
+    
     "abstract": "Put abstract here!",
-    "bibtex": "@article{YourPaperKey2024,\n  title={Your Paper Title Here},\n  author={First Author and Second Author and Third Author},\n  journal={Conference/Journal Name},\n  year={2024},\n  url={https://your-domain.com/your-project-page}\n}",
     
     
     "authors": [
@@ -83,30 +111,6 @@
           "last": "Author"
         },
         "affiliation": "Institution Name"
-      }
-    ],
-
-    
-    "links": [
-      {
-        "label": "Paper",
-        "url": "static/pdfs/sample.pdf",
-        "iconType": "pdf"
-      },
-      {
-        "label": "YouTube",
-        "url": "https://www.youtube.com/",
-        "iconType": "youtube"
-      },
-      {
-        "label": "Code",
-        "url": "https://github.com/YOUR_REPO_HERE",
-        "iconType": "github"
-      },
-      {
-        "label": "arXiv",
-        "url": "https://arxiv.org/abs/<ARXIV PAPER ID>",
-        "iconType": "arxiv"
       }
     ],
 
@@ -172,6 +176,9 @@
       "title": "Poster",
       "pdf": "static/pdfs/sample.pdf#page=1"
     },
+
+    
+    "bibtex": "@article{YourPaperKey2024,\n  title={Your Paper Title Here},\n  author={First Author and Second Author and Third Author},\n  journal={Conference/Journal Name},\n  year={2024},\n  url={https://your-domain.com/your-project-page}\n}",
 
     
     "people": [
