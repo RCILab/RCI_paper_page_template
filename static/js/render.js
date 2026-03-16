@@ -464,13 +464,45 @@
   }
 
   function getThemeBackgrounds() {
-    const rootStyle = getComputedStyle(document.documentElement);
-    return {
-      white: rootStyle.getPropertyValue('--background-primary').trim() || '#ffffff',
-      alt: rootStyle.getPropertyValue('--background-secondary').trim() || '#f8fafc'
-    };
+  const rootStyle = getComputedStyle(document.documentElement);
+
+  return {
+    white: rootStyle.getPropertyValue('--background-primary').trim() || '#ffffff',
+    secondary: rootStyle.getPropertyValue('--background-secondary').trim() || '#f8fafc',
+    accent: rootStyle.getPropertyValue('--background-accent').trim() || '#f1f5f9',
+    muted: rootStyle.getPropertyValue('--background-muted').trim() || '#f3f4f6',
+    highlight: rootStyle.getPropertyValue('--background-highlight').trim() || '#eef6ff',
+    accentSoft: rootStyle.getPropertyValue('--background-accent-soft').trim() || '#f1f5f9'
+  };
+}
+
+function resolveBackgroundValue(mode, value, palette) {
+  if (mode === 'custom') {
+    return value || palette.white;
   }
-  
+
+  if (mode === 'fixed') {
+    switch ((value || '').trim()) {
+      case 'white':
+        return palette.white;
+      case 'secondary':
+        return palette.secondary;
+      case 'accent':
+        return palette.accent;
+      case 'muted':
+        return palette.muted;
+      case 'highlight':
+        return palette.highlight;
+      case 'accent-soft':
+        return palette.accentSoft;
+      default:
+        return palette.white;
+    }
+  }
+
+  return null;
+}
+
   function clearSectionBackground(block) {
     if (!block) return;
   
@@ -485,7 +517,7 @@
   }
   
   function setSectionBackground(block, color) {
-    if (!block) return;
+    if (!block || !color) return;
   
     block.style.setProperty('background', color, 'important');
     block.style.setProperty('background-color', color, 'important');
@@ -497,58 +529,36 @@
     }
   }
   
-  function getOrderedAlternatingBlocks() {
-    const hero = document.getElementById("section-hero");
-    const teaser = document.getElementById("section-teaser");
-    const footer = document.querySelector("footer.footer");
-  
-    const orderedIds = [
-      "section-abstract",
-      "section-image-carousel",
-      "section-youtube",
-      "section-video-carousel",
-      "section-poster",
-      "BibTeX",
-      "section-people"
-    ];
-  
-    const alternatingSections = orderedIds
-      .map(id => document.getElementById(id))
-      .filter(el => el && !el.hidden);
-  
-    return {
-      hero,
-      teaser,
-      alternatingSections,
-      footer
-    };
+  function getVisibleBackgroundBlocksInDomOrder() {
+    return Array.from(
+      document.querySelectorAll('main > section[data-bg-mode], footer[data-bg-mode]')
+    ).filter(el => !el.hidden);
   }
   
   function applyAlternatingBackgrounds() {
-    const { white, alt } = getThemeBackgrounds();
-    const { hero, teaser, alternatingSections, footer } = getOrderedAlternatingBlocks();
+    const palette = getThemeBackgrounds();
+    const blocks = getVisibleBackgroundBlocksInDomOrder();
   
-    const allBlocks = [hero, teaser, ...alternatingSections, footer].filter(Boolean);
-    allBlocks.forEach(clearSectionBackground);
+    blocks.forEach(clearSectionBackground);
   
-    // hero + teaser는 무조건 흰색
-    setSectionBackground(hero, white);
-    if (teaser && !teaser.hidden) {
-      setSectionBackground(teaser, white);
-    }
+    let autoIndex = 0;
   
-    // 그 다음부터 교차
-    alternatingSections.forEach((section, index) => {
-      setSectionBackground(section, index % 2 === 0 ? alt : white);
+    blocks.forEach(block => {
+      const mode = block.dataset.bgMode;
+      const value = block.dataset.bgValue || '';
+  
+      if (mode === 'fixed' || mode === 'custom') {
+        const resolved = resolveBackgroundValue(mode, value, palette);
+        setSectionBackground(block, resolved);
+        return;
+      }
+  
+      if (mode === 'auto') {
+        const color = autoIndex % 2 === 0 ? palette.secondary : palette.white;
+        setSectionBackground(block, color);
+        autoIndex += 1;
+      }
     });
-  
-    // footer도 마지막 다음 색을 이어받음
-    if (footer) {
-      setSectionBackground(
-        footer,
-        alternatingSections.length % 2 === 0 ? alt : white
-      );
-    }
   }
 
   try {
@@ -575,7 +585,6 @@
     renderMoreWorks(content, lab);
 
     requestAnimationFrame(() => {
-      reinitializeCarousels();
       applyAlternatingBackgrounds();
     });
   } catch (error) {
