@@ -404,15 +404,37 @@
     }
   }
 
-  function reinitializeCarousels() {
+  function isEffectivelyHidden(el) {
+    let current = el;
+    while (current) {
+      if (current.hidden) return true;
+      current = current.parentElement;
+    }
+    return false;
+  }
+
+  function initializeCarouselIfReady(selector) {
+    const el = document.querySelector(selector);
+    if (!el) return;
+
+    if (isEffectivelyHidden(el)) return;
+
+    const items = el.querySelectorAll(".item");
+    if (items.length < 2) return;
+
     if (window.bulmaCarousel && typeof window.bulmaCarousel.attach === "function") {
-      window.bulmaCarousel.attach(".carousel", {
+      window.bulmaCarousel.attach(selector, {
         slidesToScroll: 1,
         slidesToShow: 1,
         loop: true,
         infinite: true
       });
     }
+  }
+
+  function reinitializeCarousels() {
+    initializeCarouselIfReady("#results-carousel");
+    initializeCarouselIfReady("#video-carousel");
   }
 
   function showVersionWarning(content) {
@@ -464,7 +486,9 @@
     renderPeople(content);
     renderMoreWorks(content, lab);
 
-    reinitializeCarousels();
+    requestAnimationFrame(() => {
+      reinitializeCarousels();
+    });
   } catch (error) {
     console.error(error);
     const main = document.getElementById("main-content");
@@ -473,7 +497,8 @@
         <section class="section">
           <div class="container is-max-desktop">
             <div class="notification is-danger">
-              Failed to load page content. Check <code>static/data/content.json</code> and <code>static/data/lab.json</code>.
+              Failed to render page content.<br>
+              <strong>${escapeHtml(error.message)}</strong>
             </div>
           </div>
         </section>
