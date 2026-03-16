@@ -11,8 +11,8 @@
     "abstract": true,
     "imageCarousel": true,
     "youtube": false,
-    "videoCarousel": false,
-    "poster": false,
+    "videoCarousel": true,
+    "poster": true,
     "bibtex": true,
     "people": true
   },
