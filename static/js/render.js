@@ -463,6 +463,49 @@
     main.prepend(warning);
   }
 
+  function getVisibleContentBlocks() {
+    const hero = document.getElementById("section-hero");
+  
+    const visibleSections = Array.from(
+      document.querySelectorAll('main > section[id^="section-"]')
+    ).filter(section => section.id !== "section-hero" && !section.hidden);
+  
+    const footer = document.querySelector("footer.footer");
+  
+    return { hero, visibleSections, footer };
+  }
+  
+  function applyAlternatingBackgrounds() {
+    const { hero, visibleSections, footer } = getVisibleContentBlocks();
+  
+    const allBlocks = [
+      hero,
+      ...visibleSections,
+      footer
+    ].filter(Boolean);
+  
+    allBlocks.forEach(block => {
+      block.classList.remove("rci-bg-white", "rci-bg-alt");
+    });
+  
+    /* 첫 번째(hero)는 항상 흰색 */
+    if (hero) {
+      hero.classList.add("rci-bg-white");
+    }
+  
+    /* hero 다음부터는 alt -> white -> alt -> white ... */
+    visibleSections.forEach((section, index) => {
+      section.classList.add(index % 2 === 0 ? "rci-bg-alt" : "rci-bg-white");
+    });
+  
+    /* footer도 마지막 섹션 다음 순서로 이어서 적용 */
+    if (footer) {
+      footer.classList.add(
+        visibleSections.length % 2 === 0 ? "rci-bg-alt" : "rci-bg-white"
+      );
+    }
+  }
+
   try {
     const [rawContent, rawLab] = await Promise.all([
       fetchJson(CONFIG.contentPath),
@@ -488,6 +531,7 @@
 
     requestAnimationFrame(() => {
       reinitializeCarousels();
+      applyAlternatingBackgrounds();
     });
   } catch (error) {
     console.error(error);
