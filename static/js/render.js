@@ -463,24 +463,41 @@
     main.prepend(warning);
   }
 
-  function getVisibleContentBlocks() {
+  function getOrderedAlternatingBlocks() {
     const hero = document.getElementById("section-hero");
-  
-    const visibleSections = Array.from(
-      document.querySelectorAll('main > section[id^="section-"]')
-    ).filter(section => section.id !== "section-hero" && !section.hidden);
-  
+    const teaser = document.getElementById("section-teaser");
     const footer = document.querySelector("footer.footer");
   
-    return { hero, visibleSections, footer };
+    // hero + teaser 뒤부터 교차할 실제 순서
+    const orderedIds = [
+      "section-abstract",
+      "section-image-carousel",
+      "section-youtube",
+      "section-video-carousel",
+      "section-poster",
+      "BibTeX",
+      "section-people"
+    ];
+  
+    const alternatingSections = orderedIds
+      .map(id => document.getElementById(id))
+      .filter(el => el && !el.hidden);
+  
+    return {
+      hero,
+      teaser,
+      alternatingSections,
+      footer
+    };
   }
   
   function applyAlternatingBackgrounds() {
-    const { hero, visibleSections, footer } = getVisibleContentBlocks();
+    const { hero, teaser, alternatingSections, footer } = getOrderedAlternatingBlocks();
   
     const allBlocks = [
       hero,
-      ...visibleSections,
+      teaser,
+      ...alternatingSections,
       footer
     ].filter(Boolean);
   
@@ -488,20 +505,25 @@
       block.classList.remove("rci-bg-white", "rci-bg-alt");
     });
   
-    /* 첫 번째(hero)는 항상 흰색 */
+    // 1) hero는 항상 흰색
     if (hero) {
       hero.classList.add("rci-bg-white");
     }
   
-    /* hero 다음부터는 alt -> white -> alt -> white ... */
-    visibleSections.forEach((section, index) => {
+    // 2) teaser도 항상 흰색 (hero와 한 묶음)
+    if (teaser && !teaser.hidden) {
+      teaser.classList.add("rci-bg-white");
+    }
+  
+    // 3) 그 다음부터 교차 시작: 첫 번째는 alt
+    alternatingSections.forEach((section, index) => {
       section.classList.add(index % 2 === 0 ? "rci-bg-alt" : "rci-bg-white");
     });
   
-    /* footer도 마지막 섹션 다음 순서로 이어서 적용 */
+    // 4) footer는 마지막 visible section 다음 색을 이어받음
     if (footer) {
       footer.classList.add(
-        visibleSections.length % 2 === 0 ? "rci-bg-alt" : "rci-bg-white"
+        alternatingSections.length % 2 === 0 ? "rci-bg-alt" : "rci-bg-white"
       );
     }
   }
