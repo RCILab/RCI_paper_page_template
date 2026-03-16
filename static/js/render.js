@@ -1,1 +1,483 @@
+(async function () {
+  const CONFIG = window.RCI_TEMPLATE_CONFIG || {
+    templateName: "RCI_paper_page_template",
+    templateVersion: "1.0.0",
+    contentPath: "static/data/content.json",
+    labPath: "static/data/lab.json"
+  };
 
+  const Schema = window.RCIContentSchema;
+
+  function qs(selector) {
+    return document.querySelector(selector);
+  }
+
+  function qsa(selector) {
+    return Array.from(document.querySelectorAll(selector));
+  }
+
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el && value !== undefined && value !== null) {
+      el.textContent = value;
+    }
+  }
+
+  function setHTML(id, value) {
+    const el = document.getElementById(id);
+    if (el && value !== undefined && value !== null) {
+      el.innerHTML = value;
+    }
+  }
+
+  function setAttr(id, attr, value) {
+    const el = document.getElementById(id);
+    if (el && value !== undefined && value !== null && value !== "") {
+      el.setAttribute(attr, value);
+    }
+  }
+
+  function showSection(sectionKey, visible) {
+    const el = document.querySelector(`[data-section="${sectionKey}"]`);
+    if (!el) return;
+    el.hidden = !visible;
+  }
+
+  function safeArray(value) {
+    return Array.isArray(value) ? value : [];
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  async function fetchJson(path) {
+    const res = await fetch(path, { cache: "no-store" });
+    if (!res.ok) {
+      throw new Error(`Failed to load ${path}: ${res.status}`);
+    }
+    return res.json();
+  }
+
+  function updateMeta(content, lab) {
+    const meta = content.meta || {};
+    const paper = content.paper || {};
+    const authors = safeArray(paper.authors);
+    const keywordList = safeArray(meta.keywords);
+    const pageUrl = content.pageUrl || window.location.href;
+    const previewImage = meta.socialPreviewImage
+      ? new URL(meta.socialPreviewImage, window.location.href).href
+      : "";
+    const authorNames = authors.map(a => a.name).join(", ");
+    const titleText = paper.title || meta.title || "Academic Project Page";
+
+    document.title = `${titleText}${authorNames ? ` - ${authorNames}` : ""} | Academic Research`;
+
+    setAttr("meta-name-title", "content", `${titleText}${authorNames ? ` - ${authorNames}` : ""}`);
+    setAttr("meta-description", "content", meta.description || "");
+    setAttr("meta-keywords", "content", keywordList.join(", "));
+    setAttr("meta-author", "content", authorNames);
+
+    setAttr("meta-og-site-name", "content", lab.lab?.fullName || lab.lab?.name || "RCILab");
+    setAttr("meta-og-title", "content", titleText);
+    setAttr("meta-og-description", "content", meta.description || "");
+    setAttr("meta-og-url", "content", pageUrl);
+    setAttr("meta-og-image", "content", previewImage);
+    setAttr("meta-og-image-alt", "content", `${titleText} - Research Preview`);
+    setAttr("meta-article-published-time", "content", meta.publishedTime || "");
+    setAttr("meta-article-section", "content", "Research");
+
+    setAttr("meta-twitter-site", "content", meta.twitterSite || "");
+    setAttr("meta-twitter-creator", "content", meta.twitterCreator || "");
+    setAttr("meta-twitter-title", "content", titleText);
+    setAttr("meta-twitter-description", "content", meta.description || "");
+    setAttr("meta-twitter-image", "content", previewImage);
+    setAttr("meta-twitter-image-alt", "content", `${titleText} - Research Preview`);
+
+    setAttr("meta-citation-title", "content", titleText);
+    setAttr("meta-citation-publication-date", "content", meta.publicationYear || "");
+    setAttr("meta-citation-conference-title", "content", meta.conferenceName || "");
+    const paperLink = (safeArray(paper.links).find(link => link.label?.toLowerCase() === "paper") || {}).url || "";
+    setAttr("meta-citation-pdf-url", "content", paperLink ? new URL(paperLink, window.location.href).href : "");
+
+    qsa('meta[name="citation_author"], meta[property="article:tag"]').forEach(el => el.remove());
+
+    authors.forEach(author => {
+      const metaAuthor = document.createElement("meta");
+      metaAuthor.setAttribute("name", "citation_author");
+      const first = author.citation?.first || "";
+      const last = author.citation?.last || "";
+      metaAuthor.setAttribute("content", `${last}, ${first}`.trim().replace(/^,\s*/, ""));
+      document.head.appendChild(metaAuthor);
+    });
+
+    keywordList.forEach(keyword => {
+      const metaTag = document.createElement("meta");
+      metaTag.setAttribute("property", "article:tag");
+      metaTag.setAttribute("content", keyword);
+      document.head.appendChild(metaTag);
+    });
+
+    const scholarJson = {
+      "@context": "https://schema.org",
+      "@type": "ScholarlyArticle",
+      "headline": titleText,
+      "description": meta.description || "",
+      "author": authors.map(author => ({
+        "@type": "Person",
+        "name": author.name || "",
+        "affiliation": {
+          "@type": "Organization",
+          "name": author.affiliation || lab.lab?.fullName || lab.lab?.name || ""
+        }
+      })),
+      "datePublished": meta.publishedTime ? meta.publishedTime.slice(0, 10) : "",
+      "publisher": {
+        "@type": "Organization",
+        "name": meta.conferenceName || ""
+      },
+      "url": pageUrl,
+      "image": previewImage,
+      "keywords": keywordList,
+      "abstract": paper.abstract || "",
+      "citation": paper.bibtex || "",
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "mainEntity": {
+        "@type": "WebPage",
+        "@id": pageUrl
+      },
+      "about": safeArray(meta.researchAreas).map(area => ({
+        "@type": "Thing",
+        "name": area
+      }))
+    };
+
+    const orgJson = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": lab.lab?.fullName || lab.lab?.name || "RCILab",
+      "url": lab.lab?.institutionUrl || lab.lab?.githubUrl || "",
+      "logo": lab.lab?.logo ? new URL(lab.lab.logo, window.location.href).href : "",
+      "sameAs": safeArray(lab.lab?.socialLinks)
+    };
+
+    const scholarNode = document.getElementById("structured-data-scholar");
+    const orgNode = document.getElementById("structured-data-org");
+    if (scholarNode) scholarNode.textContent = JSON.stringify(scholarJson, null, 2);
+    if (orgNode) orgNode.textContent = JSON.stringify(orgJson, null, 2);
+  }
+
+  function renderHero(content) {
+    const paper = content.paper || {};
+
+    setText("paper-title", paper.title || "Academic Project Page");
+    setHTML("publication-venue", paper.venueText || "");
+    if (paper.contributionNote) {
+      setHTML("contribution-note", paper.contributionNote);
+      qs("#contribution-note")?.removeAttribute("hidden");
+    } else {
+      qs("#contribution-note")?.setAttribute("hidden", "");
+    }
+
+    const authorContainer = document.getElementById("publication-authors");
+    const authorTemplate = document.getElementById("author-template");
+    if (authorContainer && authorTemplate) {
+      authorContainer.innerHTML = "";
+      const authors = safeArray(paper.authors);
+      authors.forEach((author, index) => {
+        const fragment = authorTemplate.content.cloneNode(true);
+        const link = fragment.querySelector(".author-link");
+        const mark = fragment.querySelector(".author-mark");
+        const comma = fragment.querySelector(".author-comma");
+
+        link.textContent = author.name || "";
+        link.href = author.url || "#";
+
+        if (author.mark) {
+          mark.textContent = author.mark;
+          mark.hidden = false;
+        } else {
+          mark.hidden = true;
+        }
+
+        if (index === authors.length - 1) {
+          comma.textContent = "";
+        }
+
+        authorContainer.appendChild(fragment);
+      });
+    }
+
+    const linksContainer = document.getElementById("publication-links");
+    const linkTemplate = document.getElementById("link-button-template");
+    if (linksContainer && linkTemplate) {
+      linksContainer.innerHTML = "";
+      safeArray(paper.links).forEach(linkData => {
+        const fragment = linkTemplate.content.cloneNode(true);
+        const anchor = fragment.querySelector("a");
+        const icon = fragment.querySelector(".icon");
+        const label = fragment.querySelector(".label");
+
+        anchor.href = linkData.url || "#";
+        icon.innerHTML = Schema.getIconHtml(linkData.iconType);
+        label.textContent = linkData.label || "Link";
+
+        linksContainer.appendChild(fragment);
+      });
+    }
+  }
+
+  function renderTeaser(content) {
+    const teaser = content.paper?.teaser || {};
+    const sectionVisible = !!content.sections?.teaser;
+    showSection("teaser", sectionVisible);
+    if (!sectionVisible) return;
+
+    const imageWrapper = qs("#teaser-image-wrapper");
+    const videoWrapper = qs("#teaser-video-wrapper");
+
+    if (teaser.mode === "video" && teaser.video) {
+      videoWrapper?.removeAttribute("hidden");
+      imageWrapper?.setAttribute("hidden", "");
+      setAttr("teaser-video-source", "src", teaser.video);
+      const video = qs("#teaser-video");
+      if (video) video.load();
+    } else if (teaser.image) {
+      imageWrapper?.removeAttribute("hidden");
+      videoWrapper?.setAttribute("hidden", "");
+      setAttr("teaser-image", "src", teaser.image);
+      setAttr("teaser-image", "alt", teaser.caption || "Teaser image");
+    }
+
+    setText("teaser-caption", teaser.caption || "");
+  }
+
+  function renderAbstract(content) {
+    showSection("abstract", !!content.sections?.abstract);
+    setText("paper-abstract", content.paper?.abstract || "");
+  }
+
+  function renderFigureCarousel(content) {
+    const visible = !!content.sections?.imageCarousel && safeArray(content.paper?.figureCarousel).length > 0;
+    showSection("imageCarousel", visible);
+    if (!visible) return;
+
+    const container = document.getElementById("results-carousel");
+    const template = document.getElementById("figure-carousel-item-template");
+    if (!container || !template) return;
+
+    container.innerHTML = "";
+    safeArray(content.paper.figureCarousel).forEach(item => {
+      const fragment = template.content.cloneNode(true);
+      const img = fragment.querySelector(".carousel-image");
+      const caption = fragment.querySelector(".carousel-caption");
+
+      img.src = item.image || "";
+      img.alt = item.alt || "Research result visualization";
+      caption.textContent = item.caption || "";
+
+      container.appendChild(fragment);
+    });
+  }
+
+  function renderYoutube(content) {
+    const visible = !!content.sections?.youtube && !!content.paper?.youtube?.embedUrl;
+    showSection("youtube", visible);
+    if (!visible) return;
+
+    setText("youtube-section-title", content.paper.youtube.title || "Video Presentation");
+    setAttr("youtube-embed", "src", content.paper.youtube.embedUrl || "");
+  }
+
+  function renderVideoCarousel(content) {
+    const items = safeArray(content.paper?.videoCarousel?.items);
+    const visible = !!content.sections?.videoCarousel && items.length > 0;
+    showSection("videoCarousel", visible);
+    if (!visible) return;
+
+    setText("video-carousel-title", content.paper?.videoCarousel?.title || "Another Carousel");
+
+    const container = document.getElementById("video-carousel");
+    const template = document.getElementById("video-carousel-item-template");
+    if (!container || !template) return;
+
+    container.innerHTML = "";
+    items.forEach(item => {
+      const fragment = template.content.cloneNode(true);
+      const source = fragment.querySelector(".carousel-video-source");
+      const video = fragment.querySelector(".carousel-video");
+      const caption = fragment.querySelector(".carousel-video-caption");
+
+      source.src = item.video || "";
+      if (item.caption) {
+        caption.textContent = item.caption;
+        caption.hidden = false;
+      }
+
+      container.appendChild(fragment);
+      video.load();
+    });
+  }
+
+  function renderPoster(content) {
+    const visible = !!content.sections?.poster && !!content.paper?.poster?.pdf;
+    showSection("poster", visible);
+    if (!visible) return;
+
+    setText("poster-title", content.paper.poster.title || "Poster");
+    setAttr("poster-iframe", "src", content.paper.poster.pdf || "");
+  }
+
+  function renderBibtex(content) {
+    showSection("bibtex", !!content.sections?.bibtex);
+    const pre = document.getElementById("bibtex-code");
+    const code = pre?.querySelector("code");
+    if (pre && code) {
+      code.textContent = content.paper?.bibtex || "";
+    }
+  }
+
+  function renderPeople(content) {
+    const people = safeArray(content.paper?.people);
+    const visible = !!content.sections?.people && people.length > 0;
+    showSection("people", visible);
+    if (!visible) return;
+
+    const container = document.getElementById("people-grid");
+    const template = document.getElementById("person-template");
+    if (!container || !template) return;
+
+    container.innerHTML = "";
+    people.forEach(person => {
+      const fragment = template.content.cloneNode(true);
+      const img = fragment.querySelector(".person-image");
+      const link = fragment.querySelector(".person-link");
+
+      img.src = person.image || "static/images/people/placeholder.png";
+      img.alt = person.alt || person.name || "Person";
+
+      link.textContent = person.name || "Person Name";
+      link.href = person.url || "#";
+
+      container.appendChild(fragment);
+    });
+  }
+
+  function renderMoreWorks(content, lab) {
+    const items = safeArray(lab.moreWorks);
+    const visible = !!content.sections?.moreWorks && items.length > 0;
+    showSection("moreWorks", visible);
+    if (!visible) return;
+
+    setText("more-works-title", lab.moreWorksTitle || "More Works from Our Lab");
+
+    const container = document.getElementById("works-list");
+    const template = document.getElementById("work-item-template");
+    if (!container || !template) return;
+
+    container.innerHTML = "";
+    items.forEach(work => {
+      const fragment = template.content.cloneNode(true);
+      const anchor = fragment.querySelector(".work-item");
+      const title = fragment.querySelector(".work-title");
+      const desc = fragment.querySelector(".work-description");
+      const venue = fragment.querySelector(".work-venue");
+
+      anchor.href = work.url || "#";
+      title.textContent = work.title || "";
+      desc.textContent = work.description || "";
+      venue.textContent = work.venue || "";
+
+      container.appendChild(fragment);
+    });
+  }
+
+  function applyLabBranding(lab) {
+    if (lab.lab?.favicon) {
+      qsa('link[rel="icon"], link[rel="apple-touch-icon"]').forEach(link => {
+        link.setAttribute("href", lab.lab.favicon);
+      });
+    }
+  }
+
+  function reinitializeCarousels() {
+    if (window.bulmaCarousel && typeof window.bulmaCarousel.attach === "function") {
+      window.bulmaCarousel.attach(".carousel", {
+        slidesToScroll: 1,
+        slidesToShow: 1,
+        loop: true,
+        infinite: true
+      });
+    }
+  }
+
+  function showVersionWarning(content) {
+    const compatible = Schema.templateVersionsCompatible(
+      content.templateVersion,
+      CONFIG.templateVersion
+    );
+
+    if (compatible) return;
+
+    const main = document.getElementById("main-content");
+    if (!main) return;
+
+    const warning = document.createElement("section");
+    warning.className = "section";
+    warning.innerHTML = `
+      <div class="container is-max-desktop">
+        <div class="notification is-warning">
+          Template version mismatch detected.
+          This page content is <strong>${escapeHtml(content.templateVersion || "unknown")}</strong>,
+          but the current template expects <strong>${escapeHtml(CONFIG.templateVersion)}</strong>.
+          Central manager should require a migration before editing.
+        </div>
+      </div>
+    `;
+    main.prepend(warning);
+  }
+
+  try {
+    const [rawContent, rawLab] = await Promise.all([
+      fetchJson(CONFIG.contentPath),
+      fetchJson(CONFIG.labPath)
+    ]);
+
+    const content = Schema.normalizeContent(rawContent);
+    const lab = Schema.normalizeLab(rawLab);
+
+    applyLabBranding(lab);
+    showVersionWarning(content);
+    updateMeta(content, lab);
+    renderHero(content);
+    renderTeaser(content);
+    renderAbstract(content);
+    renderFigureCarousel(content);
+    renderYoutube(content);
+    renderVideoCarousel(content);
+    renderPoster(content);
+    renderBibtex(content);
+    renderPeople(content);
+    renderMoreWorks(content, lab);
+
+    reinitializeCarousels();
+  } catch (error) {
+    console.error(error);
+    const main = document.getElementById("main-content");
+    if (main) {
+      main.innerHTML = `
+        <section class="section">
+          <div class="container is-max-desktop">
+            <div class="notification is-danger">
+              Failed to load page content. Check <code>static/data/content.json</code> and <code>static/data/lab.json</code>.
+            </div>
+          </div>
+        </section>
+      `;
+    }
+  }
+})();
