@@ -78,7 +78,10 @@
     ],
     
     
-    "abstract": "Put abstract here!",
+    "abstract": {
+      "title": "Abstract",
+      "text": "Put abstract here!"
+    },
     
     
     "authors": [
@@ -124,26 +127,29 @@
 
     
     "figureCarousel": [
-      {
-        "image": "static/images/figures/carousel1.jpg",
-        "alt": "First research result visualization",
-        "caption": "First image description."
-      },
-      {
-        "image": "static/images/figures/carousel2.jpg",
-        "alt": "Second research result visualization",
-        "caption": "Second image description."
-      },
-      {
-        "image": "static/images/figures/carousel3.jpg",
-        "alt": "Third research result visualization",
-        "caption": "Third image description."
-      },
-      {
-        "image": "static/images/figures/carousel4.jpg",
-        "alt": "Fourth research result visualization",
-        "caption": "Fourth image description."
-      }
+      "title": "Image(figure) Carousel",
+      "items": [
+        {
+          "image": "static/images/figures/carousel1.jpg",
+          "alt": "First research result visualization",
+          "caption": "First image description."
+        },
+        {
+          "image": "static/images/figures/carousel2.jpg",
+          "alt": "Second research result visualization",
+          "caption": "Second image description."
+        },
+        {
+          "image": "static/images/figures/carousel3.jpg",
+          "alt": "Third research result visualization",
+          "caption": "Third image description."
+        },
+        {
+          "image": "static/images/figures/carousel4.jpg",
+          "alt": "Fourth research result visualization",
+          "caption": "Fourth image description."
+        }
+      ]
     ],
 
     
@@ -178,10 +184,14 @@
     },
 
     
-    "bibtex": "@article{YourPaperKey2024,\n  title={Your Paper Title Here},\n  author={First Author and Second Author and Third Author},\n  journal={Conference/Journal Name},\n  year={2024},\n  url={https://your-domain.com/your-project-page}\n}",
-
+    "bibtex": {
+      "title": "BibTeX",
+      "content": "@article{YourPaperKey2024,\n  title={Your Paper Title Here},\n  author={First Author and Second Author and Third Author},\n  journal={Conference/Journal Name},\n  year={2024},\n  url={https://your-domain.com/your-project-page}\n}",
+    }
     
-    "people": [
+    "people": {
+      "title": "People",
+      "items": [
       {
         "name": "People1",
         "url": "FIRST AUTHOR PERSONAL LINK",
