@@ -128,11 +128,11 @@
       }
     ],
     "youtube": {
-      "title": "Video Presentation",
+      "title": "Video Presentation(Youtube)",
       "embedUrl": "https://www.youtube.com/embed/JkaxUblCGz0"
     },
     "videoCarousel": {
-      "title": "Another Carousel",
+      "title": "Another Video Carousel",
       "items": [
         {
           "video": "static/videos/carousel1.mp4",
