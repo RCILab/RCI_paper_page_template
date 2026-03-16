@@ -7,8 +7,8 @@
     "institutionName": "Kyung Hee University",
     "institutionUrl": "https://www.khu.ac.kr/",
     "githubUrl": "https://github.com/RCILab",
-    "logo": "static/images/icon/RCI_LAB_LOGO.png",
-    "favicon": "static/images/icon/favicon.ico",
+    "logo": "static/images/icon/RCI_LAB_LOGO.ico",
+    "favicon": "static/images/icon/RCI_LAB_LOGO.ico",
     "twitter": "",
     "socialLinks": [
       "https://github.com/RCILab"
