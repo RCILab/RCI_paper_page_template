@@ -43,7 +43,7 @@
     "title": "Academic Project Page",
     "venueText": "Institution Name<br>Conference name and year",
     "contributionNote": "<small><br><sup>*</sup>Indicates Equal Contribution, </small><small><sup>†</sup>Corresponding Author</small>",
-    "abstract": "This is a placeholder abstract for the RCILab paper page template. Replace this text with the actual abstract of your paper.",
+    "abstract": "Put abstract here!",
     "bibtex": "@article{YourPaperKey2024,\n  title={Your Paper Title Here},\n  author={First Author and Second Author and Third Author},\n  journal={Conference/Journal Name},\n  year={2024},\n  url={https://your-domain.com/your-project-page}\n}",
     "authors": [
       {
