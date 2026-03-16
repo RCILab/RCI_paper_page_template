@@ -16,6 +16,8 @@
     "bibtex": true,
     "people": true
   },
+
+  
   "meta": {
     "title": "PAPER_TITLE",
     "description": "BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS",
@@ -27,6 +29,8 @@
       "computer vision",
       "AI"
     ],
+
+    
     "publishedTime": "2024-01-01T00:00:00.000Z",
     "publicationYear": "2024",
     "conferenceName": "CONFERENCE_NAME",
@@ -39,12 +43,16 @@
       "RESEARCH_AREA_2"
     ]
   },
+
+  
   "paper": {
     "title": "Academic Project Page",
     "venueText": "Institution Name<br>Conference name and year",
     "contributionNote": "<small><br><sup>*</sup>Indicates Equal Contribution, </small><small><sup>†</sup>Corresponding Author</small>",
     "abstract": "Put abstract here!",
     "bibtex": "@article{YourPaperKey2024,\n  title={Your Paper Title Here},\n  author={First Author and Second Author and Third Author},\n  journal={Conference/Journal Name},\n  year={2024},\n  url={https://your-domain.com/your-project-page}\n}",
+    
+    
     "authors": [
       {
         "name": "First Author",
@@ -77,6 +85,8 @@
         "affiliation": "Institution Name"
       }
     ],
+
+    
     "links": [
       {
         "label": "Paper",
@@ -99,12 +109,16 @@
         "iconType": "arxiv"
       }
     ],
+
+    
     "teaser": {
       "mode": "image",
       "image": "static/images/figures/teaser.png",
       "video": "static/videos/banner_video.mp4",
       "caption": "Put video(or img) description here!"
     },
+
+    
     "figureCarousel": [
       {
         "image": "static/images/figures/carousel1.jpg",
@@ -127,10 +141,14 @@
         "caption": "Fourth image description."
       }
     ],
+
+    
     "youtube": {
       "title": "Video Presentation(Youtube)",
       "embedUrl": "https://www.youtube.com/embed/JkaxUblCGz0"
     },
+
+    
     "videoCarousel": {
       "title": "Another Video Carousel",
       "items": [
@@ -148,10 +166,14 @@
         }
       ]
     },
+
+    
     "poster": {
       "title": "Poster",
       "pdf": "static/pdfs/sample.pdf#page=1"
     },
+
+    
     "people": [
       {
         "name": "People1",
