@@ -220,7 +220,7 @@
         const fragment = linkTemplate.content.cloneNode(true);
         const anchor = fragment.querySelector("a");
         const icon = fragment.querySelector(".icon");
-        const label = fragment.querySelector(".label");
+        const label = fragment.querySelector(".button-text");
 
         anchor.href = linkData.url || "#";
         icon.innerHTML = Schema.getIconHtml(linkData.iconType);
