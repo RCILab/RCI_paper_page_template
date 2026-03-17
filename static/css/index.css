@@ -980,3 +980,38 @@ a:focus {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }
+
+/* ===== People image/name hover effect ===== */
+.person-image-link {
+  display: inline-block;
+  border-radius: var(--border-radius);
+  transition: transform .3s, box-shadow .3s;
+}
+
+.person-image-link:hover {
+  transform: scale(1.05);
+}
+
+.person-link {
+  display: inline-block;
+  transition: transform .3s, color .3s;
+}
+
+.person-image-link,
+.person-link {
+  cursor: pointer;
+}
+
+.person-link:hover {
+  transform: scale(1.05);
+}
+
+/* 사진 hover 시 그림자도 조금 강조 */
+.people-grid-card .person-image,
+.people-card .person-image {
+  transition: transform .3s, box-shadow .3s;
+}
+
+.person-image-link:hover .person-image {
+  box-shadow: var(--shadow-lg);
+}

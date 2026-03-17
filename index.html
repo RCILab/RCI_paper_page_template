@@ -542,10 +542,12 @@
   <template id="person-template">
     <div class="column is-one-quarter">
       <div class="people-grid-card has-text-centered">
-        <img class="person-image"
-            src="static/images/people/placeholder.png"
-            alt="Person"
-            style="width: 100%; max-width: 220px; aspect-ratio: 3 / 4; object-fit: cover; margin: 0 auto; display: block;">
+        <a class="person-image-link" href="#" target="_blank" rel="noopener">
+          <img class="person-image"
+              src="static/images/people/placeholder.png"
+              alt="Person"
+              style="width: 100%; max-width: 220px; aspect-ratio: 3 / 4; object-fit: cover; margin: 0 auto; display: block;">
+        </a>
         <p style="margin-top: 12px;">
           <a class="person-link" href="#" target="_blank" rel="noopener">Person Name</a>
         </p>
@@ -554,10 +556,12 @@
   </template>
 
   <template id="person-carousel-card-template">
-    <div class="people-card">
-      <img class="person-image"
-          src="static/images/people/placeholder.png"
-          alt="Person">
+    <div class="people-card has-text-centered">
+      <a class="person-image-link" href="#" target="_blank" rel="noopener">
+        <img class="person-image"
+            src="static/images/people/placeholder.png"
+            alt="Person">
+      </a>
       <p class="people-card-name">
         <a class="person-link" href="#" target="_blank" rel="noopener">Person Name</a>
       </p>

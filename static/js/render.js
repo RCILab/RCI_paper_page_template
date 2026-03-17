@@ -475,6 +475,7 @@
     track.innerHTML = "";
     pagination.innerHTML = "";
 
+    // under 4 people
     if (people.length <= 4) {
       grid.hidden = false;
       carouselWrapper.hidden = true;
@@ -483,13 +484,20 @@
       people.forEach(person => {
         const fragment = gridTemplate.content.cloneNode(true);
         const img = fragment.querySelector(".person-image");
+        const imageLink = fragment.querySelector(".person-image-link");
         const link = fragment.querySelector(".person-link");
 
         img.src = person.image || "static/images/people/placeholder.png";
         img.alt = person.alt || person.name || "Person";
 
-        link.textContent = person.name || "Person Name";
-        link.href = person.url || "#";
+        if (imageLink) {
+          imageLink.href = person.url || "#";
+        }
+
+        if (link) {
+          link.textContent = person.name || "Person Name";
+          link.href = person.url || "#";
+        }
 
         grid.appendChild(fragment);
       });
@@ -497,6 +505,7 @@
       return;
     }
 
+    // more than 4 people
     grid.hidden = true;
     carouselWrapper.hidden = false;
     pagination.hidden = false;
@@ -510,13 +519,20 @@
       pagePeople.forEach(person => {
         const fragment = cardTemplate.content.cloneNode(true);
         const img = fragment.querySelector(".person-image");
+        const imageLink = fragment.querySelector(".person-image-link");
         const link = fragment.querySelector(".person-link");
 
         img.src = person.image || "static/images/people/placeholder.png";
         img.alt = person.alt || person.name || "Person";
 
-        link.textContent = person.name || "Person Name";
-        link.href = person.url || "#";
+        if (imageLink) {
+          imageLink.href = person.url || "#";
+        }
+
+        if (link) {
+          link.textContent = person.name || "Person Name";
+          link.href = person.url || "#";
+        }
 
         page.appendChild(fragment);
       });
