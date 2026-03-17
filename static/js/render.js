@@ -397,13 +397,16 @@
     const carousel = document.getElementById("people-carousel");
     const carouselPageTemplate = document.getElementById("person-carousel-page-template");
   
-    if (!grid || !gridTemplate || !carouselWrapper || !carousel || !carouselPageTemplate || !carouselPersonTemplate) return;
+    if (!grid || !carouselWrapper || !carousel || !carouselPageTemplate || !carouselPersonTemplate) return;
   
     // 초기화
     grid.innerHTML = "";
     carousel.innerHTML = "";
   
     if (people.length <= 4) {
+
+      if (!gridTemplate) return;
+
       // grid 모드
       grid.hidden = false;
       carouselWrapper.hidden = true;
