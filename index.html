@@ -443,10 +443,21 @@
         <div class="columns is-centered">
           <div class="column is-four-fifths has-text-centered">
             <h2 id="people-title" class="title is-3" hidden></h2>
+            
+            <!-- 4명 이하: 기존 grid -->
             <div id="people-grid"
                  class="columns is-centered is-multiline is-variable is-6"
-                 data-list="paper.people.items">
+                 data-list="paper.people.items"
+                 hidden>
             </div>
+    
+            <!-- 5명 이상: carousel -->
+            <div id="people-carousel-wrapper" hidden>
+              <div id="people-carousel"
+                   class="carousel results-carousel people-carousel"
+                   data-list="paper.people.items">
+            </div>
+              
           </div>
         </div>
       </div>
@@ -530,6 +541,20 @@
     </div>
   </template>
 
+  <template id="person-carousel-item-template">
+    <div class="item">
+      <div class="person-card has-text-centered">
+        <img class="person-image"
+             src="static/images/people/placeholder.png"
+             alt="Person"
+             style="width: 100%; max-width: 220px; aspect-ratio: 3 / 4; object-fit: cover; margin: 0 auto; display: block;">
+        <p style="margin-top: 12px;">
+          <a class="person-link" href="#" target="_blank" rel="noopener">Person Name</a>
+        </p>
+      </div>
+    </div>
+  </template>
+
   <footer class="footer" data-bg-mode="auto">
     <div class="container">
       <div class="columns is-centered">
@@ -542,9 +567,7 @@
               </a>
               which was adopted from the
               <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a>
-              project page.
-              <br>
-              You are free to borrow the source code of this website, we just ask that you link back to the original template in the footer.
+              project page. You are free to borrow the source code of this website, we just ask that you link back to the original template in the footer.
               <br><br>
               This RCILab template adapts the original template for reusable lab-wide paper pages.
               <br><br>
