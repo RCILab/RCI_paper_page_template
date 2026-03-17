@@ -793,11 +793,24 @@ a:focus {
 }
 
 #people-carousel .item {
-  padding: 1.25rem;
+  padding: 0.5rem 2.5rem;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+#people-carousel .people-page {
+  margin: 0;
+}
+
+#people-carousel .people-page .column {
+  display: flex;
+  justify-content: center;
 }
 
 #people-carousel .person-card {
-  max-width: 240px;
+  width: 100%;
+  max-width: 220px;
   margin: 0 auto;
 }
 
@@ -809,6 +822,21 @@ a:focus {
 
 #people-carousel .person-link:hover {
   color: var(--primary-hover);
+}
+
+/* 캐러셀 안에서 사람 카드 이미지 크기 고정 */
+#people-carousel .person-image {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
+/* People 캐러셀 점 개수/배치가 너무 튀지 않게 */
+#people-carousel .slider-pagination {
+  margin-top: 1rem;
 }
 
 /* 아주 좁은 화면에서는 제목이 자연스럽게 줄바꿈되게 허용 */
