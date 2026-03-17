@@ -397,7 +397,7 @@
     const carousel = document.getElementById("people-carousel");
     const carouselPageTemplate = document.getElementById("person-carousel-page-template");
   
-    if (!grid || !gridTemplate || !carouselWrapper || !carousel || !carouselPageTemplate) return;
+    if (!grid || !gridTemplate || !carouselWrapper || !carousel || !carouselPageTemplate || !carouselPersonTemplate) return;
   
     // 초기화
     grid.innerHTML = "";
@@ -423,29 +423,26 @@
       });
     } else {
       // carousel 모드: 한 슬라이드에 최대 4명
-      grid.hidden = true;
-      carouselWrapper.hidden = false;
-  
       const pages = chunkArray(people, 4);
-  
+
       pages.forEach(pagePeople => {
         const pageFragment = carouselPageTemplate.content.cloneNode(true);
         const pageColumns = pageFragment.querySelector(".people-page");
-  
+      
         pagePeople.forEach(person => {
-          const personFragment = gridTemplate.content.cloneNode(true);
+          const personFragment = carouselPersonTemplate.content.cloneNode(true);
           const img = personFragment.querySelector(".person-image");
           const link = personFragment.querySelector(".person-link");
-  
+      
           img.src = person.image || "static/images/people/placeholder.png";
           img.alt = person.alt || person.name || "Person";
-  
+      
           link.textContent = person.name || "Person Name";
           link.href = person.url || "#";
-  
+      
           pageColumns.appendChild(personFragment);
         });
-  
+      
         carousel.appendChild(pageFragment);
       });
     }
