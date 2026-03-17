@@ -379,27 +379,59 @@
     const visible = !!content.sections?.people && people.length > 0;
     showSection("people", visible);
     if (!visible) return;
-
+  
     setSectionTitle("people-title", content.paper?.people?.title);
-
-    const container = document.getElementById("people-grid");
-    const template = document.getElementById("person-template");
-    if (!container || !template) return;
-
-    container.innerHTML = "";
-    people.forEach(person => {
-      const fragment = template.content.cloneNode(true);
-      const img = fragment.querySelector(".person-image");
-      const link = fragment.querySelector(".person-link");
-
-      img.src = person.image || "static/images/people/placeholder.png";
-      img.alt = person.alt || person.name || "Person";
-
-      link.textContent = person.name || "Person Name";
-      link.href = person.url || "#";
-
-      container.appendChild(fragment);
-    });
+  
+    const grid = document.getElementById("people-grid");
+    const gridTemplate = document.getElementById("person-template");
+  
+    const carouselWrapper = document.getElementById("people-carousel-wrapper");
+    const carousel = document.getElementById("people-carousel");
+    const carouselTemplate = document.getElementById("person-carousel-item-template");
+  
+    if (!grid || !gridTemplate || !carouselWrapper || !carousel || !carouselTemplate) return;
+  
+    // 초기화
+    grid.innerHTML = "";
+    carousel.innerHTML = "";
+  
+    if (people.length <= 4) {
+      // grid 모드
+      grid.hidden = false;
+      carouselWrapper.hidden = true;
+  
+      people.forEach(person => {
+        const fragment = gridTemplate.content.cloneNode(true);
+        const img = fragment.querySelector(".person-image");
+        const link = fragment.querySelector(".person-link");
+  
+        img.src = person.image || "static/images/people/placeholder.png";
+        img.alt = person.alt || person.name || "Person";
+  
+        link.textContent = person.name || "Person Name";
+        link.href = person.url || "#";
+  
+        grid.appendChild(fragment);
+      });
+    } else {
+      // carousel 모드
+      grid.hidden = true;
+      carouselWrapper.hidden = false;
+  
+      people.forEach(person => {
+        const fragment = carouselTemplate.content.cloneNode(true);
+        const img = fragment.querySelector(".person-image");
+        const link = fragment.querySelector(".person-link");
+  
+        img.src = person.image || "static/images/people/placeholder.png";
+        img.alt = person.alt || person.name || "Person";
+  
+        link.textContent = person.name || "Person Name";
+        link.href = person.url || "#";
+  
+        carousel.appendChild(fragment);
+      });
+    }
   }
 
   function renderMoreWorks(content, lab) {
@@ -470,6 +502,7 @@
   function reinitializeCarousels() {
     initializeCarouselIfReady("#results-carousel");
     initializeCarouselIfReady("#video-carousel");
+    initializeCarouselIfReady("#people-carousel");
   }
 
   function showVersionWarning(content) {
