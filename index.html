@@ -437,32 +437,42 @@
     </section>
     <!-- End BibTex citation -->
 
+
     <!-- People -->
     <section class="section hero" id="section-people" data-section="people" data-bg-mode="auto" hidden>
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column is-four-fifths has-text-centered">
             <h2 id="people-title" class="title is-3" hidden></h2>
-            
-            <!-- 4명 이하: 기존 grid -->
+
+            <!-- 4명 이하 -->
             <div id="people-grid"
-                 class="columns is-centered is-multiline is-variable is-6"
-                 data-list="paper.people.items"
-                 hidden>
+                class="columns is-centered is-multiline is-variable is-6"
+                hidden>
             </div>
-    
-            <!-- 5명 이상: carousel -->
-            <div id="people-carousel-wrapper" hidden>
-              <div id="people-carousel"
-                   class="carousel people-carousel"
-                   data-list="paper.people.items">
+
+            <!-- 5명 이상 -->
+            <div id="people-carousel-wrapper" class="people-carousel-wrapper" hidden>
+              <button id="people-prev" class="slider-navigation-previous is-hidden" type="button" aria-label="Previous people">
+                &#10094;
+              </button>
+
+              <div class="people-carousel-viewport">
+                <div id="people-track" class="people-carousel-track"></div>
+              </div>
+
+              <button id="people-next" class="slider-navigation-next is-hidden" type="button" aria-label="Next people">
+                &#10095;
+              </button>
             </div>
-              
-          </div>
+
+            <div id="people-pagination" class="people-pagination slider-pagination" hidden></div>
+          </div> 
         </div>
       </div>
     </section>
     <!-- End People -->
+
 
   </main>
 
@@ -530,33 +540,27 @@
   </template>
 
   <template id="person-template">
-    <div class="column has-text-centered is-one-quarter">
-      <img class="person-image"
-          src="static/images/people/placeholder.png"
-          alt="Person"
-          style="width: 100%; max-width: 220px; aspect-ratio: 3 / 4; object-fit: cover; margin: 0 auto; display: block;">
-      <p style="margin-top: 12px;">
-        <a class="person-link" href="#" target="_blank" rel="noopener">Person Name</a>
-      </p>
-    </div>
-  </template>
-
-   <template id="person-carousel-person-template">
-    <div class="person-card-column">
-      <div class="person-card">
+    <div class="column is-one-quarter">
+      <div class="people-grid-card has-text-centered">
         <img class="person-image"
-             src="static/images/people/placeholder.png"
-             alt="Person">
-        <p class="person-name">
+            src="static/images/people/placeholder.png"
+            alt="Person"
+            style="width: 100%; max-width: 220px; aspect-ratio: 3 / 4; object-fit: cover; margin: 0 auto; display: block;">
+        <p style="margin-top: 12px;">
           <a class="person-link" href="#" target="_blank" rel="noopener">Person Name</a>
         </p>
       </div>
     </div>
   </template>
-  
-  <template id="person-carousel-page-template">
-    <div class="item">
-      <div class="people-page"></div>
+
+  <template id="person-carousel-card-template">
+    <div class="people-card">
+      <img class="person-image"
+          src="static/images/people/placeholder.png"
+          alt="Person">
+      <p class="people-card-name">
+        <a class="person-link" href="#" target="_blank" rel="noopener">Person Name</a>
+      </p>
     </div>
   </template>
 

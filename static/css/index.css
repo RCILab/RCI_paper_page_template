@@ -785,76 +785,7 @@ a:focus {
   overflow-wrap: break-word;
 }
 
-/* ===== People section: grid / carousel ===== */
-#people-grid .column {
-  display: flex;
-  justify-content: center;
-}
-
-#people-grid .person-image,
-#people-carousel .person-image {
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
-}
-
-#people-carousel-wrapper {
-  margin-top: 1rem;
-}
-
-#people-carousel .item {
-  padding: 0.5rem 2rem;
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-#people-carousel .people-page {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 1.5rem;
-  flex-wrap: nowrap;
-  margin: 0;
-}
-
-#people-carousel .person-card-column {
-  flex: 0 0 220px;
-  max-width: 220px;
-}
-
-#people-carousel .person-card {
-  width: 220px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-#people-carousel .person-image {
-  width: 100%;
-  max-width: 220px;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  display: block;
-  margin: 0 auto;
-}
-
-#people-carousel .person-name {
-  margin-top: 12px;
-  font-size: 1rem;
-  line-height: 1.4;
-}
-
-#people-carousel .person-link {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-#people-carousel .person-link:hover {
-  color: var(--primary-hover);
-}
-
-/* ===== People section width/title stability fix ===== */
+/* ===== People section stability ===== */
 #section-people .column.is-four-fifths {
   width: 100%;
   max-width: 1100px;
@@ -871,5 +802,181 @@ a:focus {
 @media screen and (max-width: 480px) {
   #section-people h2.title.is-3 {
     white-space: normal;
+  }
+}
+
+/* ===== People grid ===== */
+#people-grid .column {
+  display: flex;
+  justify-content: center;
+}
+
+#people-grid .people-grid-card {
+  width: 100%;
+  max-width: 220px;
+  text-align: center;
+}
+
+#people-grid .person-image,
+.people-card .person-image {
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+}
+
+#people-grid .person-link,
+.people-card .person-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+#people-grid .person-link:hover,
+.people-card .person-link:hover {
+  color: var(--primary-hover);
+}
+
+/* ===== People custom carousel ===== */
+.people-carousel-wrapper {
+  position: relative;
+  margin-top: 1rem;
+  padding: 0 3rem;
+}
+
+.people-carousel-viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+.people-carousel-track {
+  display: flex;
+  transition: transform 0.35s ease;
+  will-change: transform;
+}
+
+.people-carousel-page {
+  min-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+  justify-items: center;
+}
+
+.people-card {
+  width: 100%;
+  max-width: 220px;
+  text-align: center;
+}
+
+.people-card .person-image {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
+.people-card-name {
+  margin-top: 12px;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.people-card .person-link,
+#people-grid .person-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.people-card .person-link:hover,
+#people-grid .person-link:hover {
+  color: var(--primary-hover);
+}
+
+/* ===== People carousel navigation / pagination (Bulma-like) ===== */
+#people-carousel-wrapper .slider-navigation-previous,
+#people-carousel-wrapper .slider-navigation-next {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  background: #fff center center no-repeat;
+  background-size: 20px 20px;
+  border: 1px solid #fff;
+  border-radius: 25091983px;
+  box-shadow: 0 2px 5px #3232321a;
+  top: 40%;
+  margin-top: -20px;
+  cursor: pointer;
+  transition: transform .3s, opacity .3s;
+  z-index: 2;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+}
+
+#people-carousel-wrapper .slider-navigation-previous:hover,
+#people-carousel-wrapper .slider-navigation-next:hover {
+  transform: scale(1.2);
+}
+
+#people-carousel-wrapper .slider-navigation-previous {
+  left: 0;
+}
+
+#people-carousel-wrapper .slider-navigation-next {
+  right: 0;
+}
+
+#people-carousel-wrapper .slider-navigation-previous.is-hidden,
+#people-carousel-wrapper .slider-navigation-next.is-hidden {
+  display: none;
+  opacity: 0;
+}
+
+#people-pagination {
+  position: static;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0;
+}
+
+#people-pagination .slider-page {
+  background: #fff;
+  width: 10px;
+  height: 10px;
+  border-radius: 25091983px;
+  display: inline-block;
+  margin: 0 3px;
+  box-shadow: 0 2px 5px #3232321a;
+  transition: transform .3s;
+  cursor: pointer;
+  border: none;
+}
+
+#people-pagination .slider-page.is-active,
+#people-pagination .slider-page:hover {
+  transform: scale(1.4);
+  background: var(--primary-color);
+}
+
+@media screen and (max-width: 1024px) {
+  .people-carousel-page {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .people-carousel-wrapper {
+    padding: 0 2.5rem;
+  }
+
+  .people-carousel-page {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }

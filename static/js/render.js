@@ -71,6 +71,11 @@
     return result;
   }
 
+  let peopleCarouselState = {
+    page: 0,
+    totalPages: 0
+  };
+
   function escapeHtml(str) {
     return String(str)
       .replaceAll("&", "&amp;")
@@ -382,6 +387,70 @@
     }
   }
 
+  function updatePeopleCarouselUI() {
+    const track = document.getElementById("people-track");
+    const pagination = document.getElementById("people-pagination");
+    const prev = document.getElementById("people-prev");
+    const next = document.getElementById("people-next");
+
+    if (!track || !pagination || !prev || !next) return;
+
+    track.style.transform = `translateX(-${peopleCarouselState.page * 100}%)`;
+
+    const dots = pagination.querySelectorAll(".slider-page");
+    dots.forEach((dot, index) => {
+      dot.classList.toggle("is-active", index === peopleCarouselState.page);
+    });
+
+    const atFirst = peopleCarouselState.page === 0;
+    const atLast = peopleCarouselState.page >= peopleCarouselState.totalPages - 1;
+    const singlePage = peopleCarouselState.totalPages <= 1;
+
+    prev.classList.toggle("is-hidden", atFirst || singlePage);
+    next.classList.toggle("is-hidden", atLast || singlePage);
+    pagination.hidden = singlePage;
+  }
+
+  function setupPeopleCarousel(totalPages) {
+    const prev = document.getElementById("people-prev");
+    const next = document.getElementById("people-next");
+    const pagination = document.getElementById("people-pagination");
+
+    peopleCarouselState.page = 0;
+    peopleCarouselState.totalPages = totalPages;
+
+    if (!prev || !next || !pagination) return;
+
+    prev.onclick = () => {
+      if (peopleCarouselState.page > 0) {
+        peopleCarouselState.page -= 1;
+        updatePeopleCarouselUI();
+      }
+    };
+
+    next.onclick = () => {
+      if (peopleCarouselState.page < peopleCarouselState.totalPages - 1) {
+        peopleCarouselState.page += 1;
+        updatePeopleCarouselUI();
+      }
+    };
+
+    pagination.innerHTML = "";
+    for (let i = 0; i < totalPages; i++) {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "slider-page";
+      dot.setAttribute("aria-label", `Go to people page ${i + 1}`);
+      dot.onclick = () => {
+        peopleCarouselState.page = i;
+        updatePeopleCarouselUI();
+      };
+      pagination.appendChild(dot);
+    }
+
+    updatePeopleCarouselUI();
+  }
+
   function renderPeople(content) {
     const people = safeArray(content.paper?.people?.items);
     const visible = !!content.sections?.people && people.length > 0;
@@ -393,53 +462,34 @@
     const grid = document.getElementById("people-grid");
     const gridTemplate = document.getElementById("person-template");
     const carouselWrapper = document.getElementById("people-carousel-wrapper");
-    const carousel = document.getElementById("people-carousel");
-    const carouselPageTemplate = document.getElementById("person-carousel-page-template");
-    const carouselPersonTemplate = document.getElementById("person-carousel-person-template");
+    const track = document.getElementById("people-track");
+    const cardTemplate = document.getElementById("person-carousel-card-template");
+    const pagination = document.getElementById("people-pagination");
 
-    window.__peopleDebug = {
-      count: people.length,
-      hasGrid: !!grid,
-      hasGridTemplate: !!gridTemplate,
-      hasCarouselWrapper: !!carouselWrapper,
-      hasCarousel: !!carousel,
-      hasCarouselPageTemplate: !!carouselPageTemplate,
-      hasCarouselPersonTemplate: !!carouselPersonTemplate
-    };
-    console.log("People debug:", window.__peopleDebug);
-
-    if (!grid || !carouselWrapper || !carousel || !carouselPageTemplate || !carouselPersonTemplate) {
+    if (!grid || !gridTemplate || !carouselWrapper || !track || !cardTemplate || !pagination) {
       console.error("People render aborted: required DOM node missing.");
       return;
     }
 
-    // 초기화
     grid.innerHTML = "";
-    carousel.innerHTML = "";
+    track.innerHTML = "";
+    pagination.innerHTML = "";
 
     if (people.length <= 4) {
-      if (!gridTemplate) {
-        console.error("People grid mode aborted: #person-template missing.");
-        return;
-      }
-
       grid.hidden = false;
       carouselWrapper.hidden = true;
+      pagination.hidden = true;
 
       people.forEach(person => {
         const fragment = gridTemplate.content.cloneNode(true);
         const img = fragment.querySelector(".person-image");
         const link = fragment.querySelector(".person-link");
 
-        if (img) {
-          img.src = person.image || "static/images/people/placeholder.png";
-          img.alt = person.alt || person.name || "Person";
-        }
+        img.src = person.image || "static/images/people/placeholder.png";
+        img.alt = person.alt || person.name || "Person";
 
-        if (link) {
-          link.textContent = person.name || "Person Name";
-          link.href = person.url || "#";
-        }
+        link.textContent = person.name || "Person Name";
+        link.href = person.url || "#";
 
         grid.appendChild(fragment);
       });
@@ -447,38 +497,34 @@
       return;
     }
 
-    // 5명 이상: carousel 모드
     grid.hidden = true;
     carouselWrapper.hidden = false;
+    pagination.hidden = false;
 
     const pages = chunkArray(people, 4);
 
     pages.forEach(pagePeople => {
-      const pageFragment = carouselPageTemplate.content.cloneNode(true);
-      const pageColumns = pageFragment.querySelector(".people-page");
-
-      if (!pageColumns) return;
+      const page = document.createElement("div");
+      page.className = "people-carousel-page";
 
       pagePeople.forEach(person => {
-        const personFragment = carouselPersonTemplate.content.cloneNode(true);
-        const img = personFragment.querySelector(".person-image");
-        const link = personFragment.querySelector(".person-link");
+        const fragment = cardTemplate.content.cloneNode(true);
+        const img = fragment.querySelector(".person-image");
+        const link = fragment.querySelector(".person-link");
 
-        if (img) {
-          img.src = person.image || "static/images/people/placeholder.png";
-          img.alt = person.alt || person.name || "Person";
-        }
+        img.src = person.image || "static/images/people/placeholder.png";
+        img.alt = person.alt || person.name || "Person";
 
-        if (link) {
-          link.textContent = person.name || "Person Name";
-          link.href = person.url || "#";
-        }
+        link.textContent = person.name || "Person Name";
+        link.href = person.url || "#";
 
-        pageColumns.appendChild(personFragment);
+        page.appendChild(fragment);
       });
 
-      carousel.appendChild(pageFragment);
+      track.appendChild(page);
     });
+
+    setupPeopleCarousel(pages.length);
   }
 
   function renderMoreWorks(content, lab) {
@@ -558,11 +604,6 @@
     initializeCarouselIfReady("#video-carousel", {
       loop: true,
       infinite: true
-    });
-  
-    initializeCarouselIfReady("#people-carousel", {
-      loop: false,
-      infinite: false
     });
   }
   
