@@ -752,6 +752,15 @@ a:focus {
   }
 }
 
+
+/* 아주 좁은 화면에서는 제목이 자연스럽게 줄바꿈되게 허용 */
+@media screen and (max-width: 480px) {
+  #section-abstract h2.title.is-3 {
+    white-space: normal;
+  }
+}
+
+
 /* ===== Abstract section stability fix ===== */
 #section-abstract .column.is-four-fifths {
   width: 100%;
@@ -793,38 +802,32 @@ a:focus {
 }
 
 #people-carousel .item {
-  padding: 0.5rem 2.5rem;
+  padding: 0.5rem 2rem;
   background: transparent !important;
   box-shadow: none !important;
   border: none !important;
 }
 
 #people-carousel .people-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: nowrap;
   margin: 0;
 }
 
-#people-carousel .people-page .column {
-  display: flex;
-  justify-content: center;
+#people-carousel .person-card-column {
+  flex: 0 0 220px;
+  max-width: 220px;
 }
 
 #people-carousel .person-card {
-  width: 100%;
-  max-width: 220px;
+  width: 220px;
   margin: 0 auto;
+  text-align: center;
 }
 
-#people-carousel .person-link {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-#people-carousel .person-link:hover {
-  color: var(--primary-hover);
-}
-
-/* 캐러셀 안에서 사람 카드 이미지 크기 고정 */
 #people-carousel .person-image {
   width: 100%;
   max-width: 220px;
@@ -834,14 +837,19 @@ a:focus {
   margin: 0 auto;
 }
 
-/* People 캐러셀 점 개수/배치가 너무 튀지 않게 */
-#people-carousel .slider-pagination {
-  margin-top: 1rem;
+#people-carousel .person-name {
+  margin-top: 12px;
+  font-size: 1rem;
+  line-height: 1.4;
 }
 
-/* 아주 좁은 화면에서는 제목이 자연스럽게 줄바꿈되게 허용 */
-@media screen and (max-width: 480px) {
-  #section-abstract h2.title.is-3 {
-    white-space: normal;
-  }
+#people-carousel .person-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+#people-carousel .person-link:hover {
+  color: var(--primary-hover);
 }
