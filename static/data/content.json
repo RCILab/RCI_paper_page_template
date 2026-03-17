@@ -209,18 +209,6 @@
           "url": "THIRD AUTHOR PERSONAL LINK",
           "image": "static/images/people/placeholder.png",
           "alt": "People3"
-        },
-        {
-          "name": "People4",
-          "url": "THIRD AUTHOR PERSONAL LINK",
-          "image": "static/images/people/placeholder.png",
-          "alt": "People4"
-        },
-        {
-          "name": "People5",
-          "url": "THIRD AUTHOR PERSONAL LINK",
-          "image": "static/images/people/placeholder.png",
-          "alt": "People5"
         }
       ]
     }
