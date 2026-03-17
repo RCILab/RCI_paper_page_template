@@ -63,6 +63,14 @@
     return Array.isArray(value) ? value : [];
   }
 
+  function chunkArray(array, size) {
+    const result = [];
+    for (let i = 0; i < array.length; i += size) {
+      result.push(array.slice(i, i + size));
+    }
+    return result;
+  }
+
   function escapeHtml(str) {
     return String(str)
       .replaceAll("&", "&amp;")
@@ -387,9 +395,9 @@
   
     const carouselWrapper = document.getElementById("people-carousel-wrapper");
     const carousel = document.getElementById("people-carousel");
-    const carouselTemplate = document.getElementById("person-carousel-item-template");
+    const carouselPageTemplate = document.getElementById("person-carousel-page-template");
   
-    if (!grid || !gridTemplate || !carouselWrapper || !carousel || !carouselTemplate) return;
+    if (!grid || !gridTemplate || !carouselWrapper || !carousel || !carouselPageTemplate) return;
   
     // 초기화
     grid.innerHTML = "";
@@ -414,22 +422,31 @@
         grid.appendChild(fragment);
       });
     } else {
-      // carousel 모드
+      // carousel 모드: 한 슬라이드에 최대 4명
       grid.hidden = true;
       carouselWrapper.hidden = false;
   
-      people.forEach(person => {
-        const fragment = carouselTemplate.content.cloneNode(true);
-        const img = fragment.querySelector(".person-image");
-        const link = fragment.querySelector(".person-link");
+      const pages = chunkArray(people, 4);
   
-        img.src = person.image || "static/images/people/placeholder.png";
-        img.alt = person.alt || person.name || "Person";
+      pages.forEach(pagePeople => {
+        const pageFragment = carouselPageTemplate.content.cloneNode(true);
+        const pageColumns = pageFragment.querySelector(".people-page");
   
-        link.textContent = person.name || "Person Name";
-        link.href = person.url || "#";
+        pagePeople.forEach(person => {
+          const personFragment = gridTemplate.content.cloneNode(true);
+          const img = personFragment.querySelector(".person-image");
+          const link = personFragment.querySelector(".person-link");
   
-        carousel.appendChild(fragment);
+          img.src = person.image || "static/images/people/placeholder.png";
+          img.alt = person.alt || person.name || "Person";
+  
+          link.textContent = person.name || "Person Name";
+          link.href = person.url || "#";
+  
+          pageColumns.appendChild(personFragment);
+        });
+  
+        carousel.appendChild(pageFragment);
       });
     }
   }
@@ -480,31 +497,45 @@
     return false;
   }
 
-  function initializeCarouselIfReady(selector) {
+  function initializeCarouselIfReady(selector, options = {}) {
     const el = document.querySelector(selector);
     if (!el) return;
-
+  
     if (isEffectivelyHidden(el)) return;
-
+  
     const items = el.querySelectorAll(".item");
     if (items.length < 2) return;
-
+  
     if (window.bulmaCarousel && typeof window.bulmaCarousel.attach === "function") {
       window.bulmaCarousel.attach(selector, {
         slidesToScroll: 1,
         slidesToShow: 1,
-        loop: true,
-        infinite: true
+        loop: false,
+        infinite: false,
+        pagination: true,
+        navigation: true,
+        ...options
       });
     }
   }
 
   function reinitializeCarousels() {
-    initializeCarouselIfReady("#results-carousel");
-    initializeCarouselIfReady("#video-carousel");
-    initializeCarouselIfReady("#people-carousel");
+    initializeCarouselIfReady("#results-carousel", {
+      loop: true,
+      infinite: true
+    });
+  
+    initializeCarouselIfReady("#video-carousel", {
+      loop: true,
+      infinite: true
+    });
+  
+    initializeCarouselIfReady("#people-carousel", {
+      loop: false,
+      infinite: false
+    });
   }
-
+  
   function showVersionWarning(content) {
     const compatible = Schema.templateVersionsCompatible(
       content.templateVersion,
