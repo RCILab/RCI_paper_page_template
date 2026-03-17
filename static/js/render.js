@@ -396,6 +396,7 @@
     const carouselWrapper = document.getElementById("people-carousel-wrapper");
     const carousel = document.getElementById("people-carousel");
     const carouselPageTemplate = document.getElementById("person-carousel-page-template");
+    const carouselPersonTemplate = document.getElementById("person-carousel-person-template");
   
     if (!grid || !carouselWrapper || !carousel || !carouselPageTemplate || !carouselPersonTemplate) return;
   
