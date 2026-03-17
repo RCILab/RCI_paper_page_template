@@ -387,69 +387,98 @@
     const visible = !!content.sections?.people && people.length > 0;
     showSection("people", visible);
     if (!visible) return;
-  
+
     setSectionTitle("people-title", content.paper?.people?.title);
-  
+
     const grid = document.getElementById("people-grid");
     const gridTemplate = document.getElementById("person-template");
-  
     const carouselWrapper = document.getElementById("people-carousel-wrapper");
     const carousel = document.getElementById("people-carousel");
     const carouselPageTemplate = document.getElementById("person-carousel-page-template");
     const carouselPersonTemplate = document.getElementById("person-carousel-person-template");
-  
-    if (!grid || !carouselWrapper || !carousel || !carouselPageTemplate || !carouselPersonTemplate) return;
-  
+
+    window.__peopleDebug = {
+      count: people.length,
+      hasGrid: !!grid,
+      hasGridTemplate: !!gridTemplate,
+      hasCarouselWrapper: !!carouselWrapper,
+      hasCarousel: !!carousel,
+      hasCarouselPageTemplate: !!carouselPageTemplate,
+      hasCarouselPersonTemplate: !!carouselPersonTemplate
+    };
+    console.log("People debug:", window.__peopleDebug);
+
+    if (!grid || !carouselWrapper || !carousel || !carouselPageTemplate || !carouselPersonTemplate) {
+      console.error("People render aborted: required DOM node missing.");
+      return;
+    }
+
     // 초기화
     grid.innerHTML = "";
     carousel.innerHTML = "";
-  
+
     if (people.length <= 4) {
+      if (!gridTemplate) {
+        console.error("People grid mode aborted: #person-template missing.");
+        return;
+      }
 
-      if (!gridTemplate) return;
-
-      // grid 모드
       grid.hidden = false;
       carouselWrapper.hidden = true;
-  
+
       people.forEach(person => {
         const fragment = gridTemplate.content.cloneNode(true);
         const img = fragment.querySelector(".person-image");
         const link = fragment.querySelector(".person-link");
-  
-        img.src = person.image || "static/images/people/placeholder.png";
-        img.alt = person.alt || person.name || "Person";
-  
-        link.textContent = person.name || "Person Name";
-        link.href = person.url || "#";
-  
-        grid.appendChild(fragment);
-      });
-    } else {
-      // carousel 모드: 한 슬라이드에 최대 4명
-      const pages = chunkArray(people, 4);
 
-      pages.forEach(pagePeople => {
-        const pageFragment = carouselPageTemplate.content.cloneNode(true);
-        const pageColumns = pageFragment.querySelector(".people-page");
-      
-        pagePeople.forEach(person => {
-          const personFragment = carouselPersonTemplate.content.cloneNode(true);
-          const img = personFragment.querySelector(".person-image");
-          const link = personFragment.querySelector(".person-link");
-      
+        if (img) {
           img.src = person.image || "static/images/people/placeholder.png";
           img.alt = person.alt || person.name || "Person";
-      
+        }
+
+        if (link) {
           link.textContent = person.name || "Person Name";
           link.href = person.url || "#";
-      
-          pageColumns.appendChild(personFragment);
-        });
-      
-        carousel.appendChild(pageFragment);
+        }
+
+        grid.appendChild(fragment);
       });
+
+      return;
     }
+
+    // 5명 이상: carousel 모드
+    grid.hidden = true;
+    carouselWrapper.hidden = false;
+
+    const pages = chunkArray(people, 4);
+
+    pages.forEach(pagePeople => {
+      const pageFragment = carouselPageTemplate.content.cloneNode(true);
+      const pageColumns = pageFragment.querySelector(".people-page");
+
+      if (!pageColumns) return;
+
+      pagePeople.forEach(person => {
+        const personFragment = carouselPersonTemplate.content.cloneNode(true);
+        const img = personFragment.querySelector(".person-image");
+        const link = personFragment.querySelector(".person-link");
+
+        if (img) {
+          img.src = person.image || "static/images/people/placeholder.png";
+          img.alt = person.alt || person.name || "Person";
+        }
+
+        if (link) {
+          link.textContent = person.name || "Person Name";
+          link.href = person.url || "#";
+        }
+
+        pageColumns.appendChild(personFragment);
+      });
+
+      carousel.appendChild(pageFragment);
+    });
   }
 
   function renderMoreWorks(content, lab) {
