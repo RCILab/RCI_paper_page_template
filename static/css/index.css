@@ -776,6 +776,41 @@ a:focus {
   overflow-wrap: break-word;
 }
 
+/* ===== People section: grid / carousel ===== */
+#people-grid .column {
+  display: flex;
+  justify-content: center;
+}
+
+#people-grid .person-image,
+#people-carousel .person-image {
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+}
+
+#people-carousel-wrapper {
+  margin-top: 1rem;
+}
+
+#people-carousel .item {
+  padding: 1.25rem;
+}
+
+#people-carousel .person-card {
+  max-width: 240px;
+  margin: 0 auto;
+}
+
+#people-carousel .person-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+#people-carousel .person-link:hover {
+  color: var(--primary-hover);
+}
+
 /* 아주 좁은 화면에서는 제목이 자연스럽게 줄바꿈되게 허용 */
 @media screen and (max-width: 480px) {
   #section-abstract h2.title.is-3 {
